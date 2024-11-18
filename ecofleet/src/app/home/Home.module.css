@@ -1,247 +1,240 @@
 .container {
-    padding: 20px;
-    color: #011627;
-    text-align: center;
-  }
-  
-  /* Seção Hero com Animação Sutil */
-  .hero {
-    position: relative;
-    padding: 100px 20px;
-    background: linear-gradient(135deg, #1a535c, #4ecdc4);
-    color: #ffffff;
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  
-  .heroTitle {
-    font-size: 48px;
-    margin: 0;
-    position: relative;
-  }
-  
-  .heroSubtitle {
-    font-size: 20px;
-    margin-top: 10px;
-    position: relative;
-  }
-  
-  .ctaButton {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #ffffff;
-    color: #1a535c;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: transform 0.3s ease, background-color 0.3s ease;
-    position: relative;
-  }
-  
-  .ctaButton:hover {
-    background-color: #4ecdc4;
-    transform: scale(1.05);
-  }
-  
-  /* Benefícios do Projeto */
-  .benefits {
-    margin: 40px 0;
-  }
-  
-  .benefitCards {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  
-  .benefitCard {
-    background-color: #f7f7f7;
-    padding: 20px;
-    border-radius: 8px;
-    width: 200px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    transition: transform 0.3s ease;
-  }
-  
-  .benefitCard:hover {
-    transform: scale(1.05);
-  }
-  
-  .icon {
-    font-size: 36px;
-    color: #4ecdc4;
-    margin-bottom: 10px;
-  }
-  
-  /* Seção Quem Somos */
-  .about {
-    margin: 40px 0;
-    padding: 20px;
-    background: #4ecdc4;
-    color: #011627;
-    border-radius: 8px;
-  }
-  
-  /* Seção Criadores */
-  .creators {
-    margin-top: 40px;
-  }
-  
-  .sectionTitle {
-    font-size: 32px;
-    color: #1a535c;
-    margin-bottom: 20px;
-  }
-  
-  .creatorCards {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  
-  .creatorCard {
-    width: 240px;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    padding: 20px 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: transform 0.3s ease;
-    cursor: pointer;
-  }
-  
-  .creatorCard:hover {
-    transform: scale(1.05);
-  }
-  
-  .creatorImage {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 15px;
-  }
-  
-  .creatorInfo h3 {
-    font-size: 18px;
-    color: #1a535c;
-    margin: 10px 0 5px;
-  }
-  
-  .creatorInfo p {
-    font-size: 14px;
-    color: #3420e2;
-    margin: 5px 0;
-  }
-  
-  .socialLinks a {
-    color: #0c0072;
-    margin: 0 5px;
-    text-decoration: none;
-    font-size: 16px;
-    transition: color 0.3s ease;
-  }
-  
-  .socialLinks a:hover {
-    color: #1a535c;
-  }
+  padding: 20px;
+  color: #011627;
+  font-family: 'Roboto', sans-serif;
+  text-align: center;
+}
 
-  .container {
-    padding: 20px;
-    color: #011627;
-    text-align: center;
-  }
-  
-  /* Seção Hero com Animação Sutil */
-  .hero {
-    position: relative;
-    padding: 100px 20px;
-    background: linear-gradient(135deg, #1a535c, #4ecdc4);
-    color: #ffffff;
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  
-  .heroTitle {
-    font-size: 48px;
-    margin: 0;
-    position: relative;
-  }
-  
-  .heroSubtitle {
-    font-size: 20px;
-    margin-top: 10px;
-    position: relative;
-  }
-  
-  .ctaButton {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #ffffff;
-    color: #1a535c;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: transform 0.3s ease, background-color 0.3s ease;
-    position: relative;
-  }
-  
-  .ctaButton:hover {
-    background-color: #4ecdc4;
-    transform: scale(1.05);
-  }
-  
-  /* Benefícios do Projeto */
-  .benefits {
-    margin: 40px 0;
-  }
-  
-  .benefitCards {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  
-  .benefitCard {
-    background-color: #f7f7f7;
-    padding: 20px;
-    border-radius: 8px;
-    width: 220px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    transition: transform 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .benefitCard:hover {
-    transform: scale(1.05);
-  }
-  
-  .icon {
-    font-size: 48px; /* Aumenta o tamanho do ícone */
-    color: #4ecdc4;
-    margin-bottom: 10px;
-  }
-  
-  .benefitCard h3 {
-    font-size: 18px;
-    color: #1a535c;
-    margin: 10px 0;
-  }
-  
-  .benefitCard p {
-    font-size: 14px;
-    color: #011627;
-    margin: 5px 0;
-    line-height: 1.4;
-  }
-  
+/* Hero Section */
+.hero {
+  padding: 100px 20px;
+  background: linear-gradient(135deg, #1a535c, #4ecdc4);
+  color: white;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.heroTitle {
+  font-size: 48px;
+  margin: 0;
+}
+
+.heroSubtitle {
+  font-size: 20px;
+  margin-top: 10px;
+}
+
+.heroButtons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.ctaButton,
+.secondaryButton {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.ctaButton {
+  background: #fff;
+  color: #1a535c;
+  border: none;
+}
+
+.ctaButton:hover {
+  background: #4ecdc4;
+  color: white;
+  transform: scale(1.05);
+}
+
+.secondaryButton {
+  background: transparent;
+  border: 2px solid white;
+  color: white;
+}
+
+.secondaryButton:hover {
+  background: white;
+  color: #1a535c;
+}
+
+/* About Section */
+.about {
+  margin: 40px 0;
+  background: #f7f7f7;
+  padding: 40px 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.about h2 {
+  font-size: 32px;
+  color: #1a535c;
+  margin-bottom: 20px;
+}
+
+.about p {
+  font-size: 18px;
+  color: #011627;
+  margin: 10px 0;
+  line-height: 1.6;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.list li {
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+/* Benefits Section */
+.benefits {
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.benefitCards {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.benefitCard {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  width: 240px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.benefitCard:hover {
+  transform: scale(1.05);
+}
+
+.icon {
+  font-size: 48px;
+  color: #4ecdc4;
+  margin-bottom: 10px;
+}
+
+.benefitCard h3 {
+  font-size: 18px;
+  color: #1a535c;
+  margin-top: 10px;
+}
+
+.benefitCard p {
+  font-size: 14px;
+  color: #011627;
+  line-height: 1.4;
+}
+
+/* Steps Section */
+.steps {
+  padding: 60px 20px;
+  background: #e0f7fa;
+  text-align: center;
+  border-radius: 10px;
+}
+
+.steps h2 {
+  font-size: 32px;
+  color: #1a535c;
+  margin-bottom: 20px;
+}
+
+.stepCards {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.stepCard {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 240px;
+}
+
+.stepCard h3 {
+  font-size: 18px;
+  color: #1a535c;
+}
+
+.stepNumber {
+  font-size: 32px;
+  color: #4ecdc4;
+  font-weight: bold;
+}
+
+/* Creators Section */
+.creators {
+  margin-top: 40px;
+}
+
+.creatorCards {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.creatorCard {
+  width: 240px;
+  background: white;
+  border-radius: 10px;
+  text-align: center;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.creatorCard:hover {
+  transform: scale(1.05);
+}
+
+.creatorImage {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.creatorInfo h3 {
+  font-size: 18px;
+  color: #1a535c;
+  margin-top: 10px;
+}
+
+.creatorInfo p {
+  font-size: 14px;
+  color: #011627;
+  margin: 5px 0;
+}
+
+.socialLinks a {
+  color: #4ecdc4;
+  margin: 0 10px;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.socialLinks a:hover {
+  color: #1a535c;
+}
