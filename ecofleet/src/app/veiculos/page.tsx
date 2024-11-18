@@ -1,11 +1,21 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/footer';
 import styles from './Veiculos.module.css';
 
 export default function VehiclesPage() {
-  const [vehicles, setVehicles] = useState([]);
+  const [vehicles, setVehicles] = useState<
+    {
+      id: number;
+      name: string;
+      efficiency: string;
+      score: string;
+      cost: string;
+      fuelType: string;
+      monthlyDistance: string;
+    }[]
+  >([]);
   const [newVehicle, setNewVehicle] = useState({
     name: '',
     distance: '',
@@ -16,28 +26,33 @@ export default function VehiclesPage() {
   const [showForm, setShowForm] = useState(false);
 
   // Preços médios por tipo de combustível
-  const fuelPrices = {
-    gasoline: 5.59,    // R$ por litro
-    ethanol: 4.09,     // R$ por litro
-    diesel: 4.89,      // R$ por litro
-    electricity: 0.50  // R$ por kWh
+  const fuelPrices: { [key: string]: number } = {
+    gasoline: 5.59, // R$ por litro
+    ethanol: 4.09, // R$ por litro
+    diesel: 4.89, // R$ por litro
+    electricity: 0.50 // R$ por kWh
   };
 
   // Cálculo de eficiência e custo com base no tipo de combustível
-  const calculateEfficiencyAndCost = (distance, fuel, fuelType, monthlyDistance) => {
-    const efficiency = (distance / fuel).toFixed(2);  // km/L ou km/kWh
-    const fuelNeededMonthly = (monthlyDistance / efficiency).toFixed(2); // Consumo mensal estimado
-    const cost = (fuelNeededMonthly * fuelPrices[fuelType]).toFixed(2);  // Custo mensal
+  const calculateEfficiencyAndCost = (
+    distance: number,
+    fuel: number,
+    fuelType: string,
+    monthlyDistance: number
+  ) => {
+    const efficiency = (distance / fuel).toFixed(2); // km/L ou km/kWh
+    const fuelNeededMonthly = (monthlyDistance / parseFloat(efficiency)).toFixed(2); // Consumo mensal estimado
+    const cost = (parseFloat(fuelNeededMonthly) * fuelPrices[fuelType]).toFixed(2); // Custo mensal
 
     let score = 'Alta Eficiência';
-    if (efficiency < 10) score = 'Baixa Eficiência';
-    else if (efficiency < 15) score = 'Eficiência Média';
+    if (parseFloat(efficiency) < 10) score = 'Baixa Eficiência';
+    else if (parseFloat(efficiency) < 15) score = 'Eficiência Média';
 
     return { efficiency: `${efficiency} km/${fuelType === 'electricity' ? 'kWh' : 'L'}`, score, cost };
   };
 
   // Função para lidar com entrada de dados do formulário
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setNewVehicle((prevVehicle) => ({
       ...prevVehicle,
