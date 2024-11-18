@@ -1,22 +1,10 @@
 'use client';
-import { useRef } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/footer';
 import styles from './Home.module.css';
 import { FaCar, FaLeaf, FaChartLine, FaTools } from 'react-icons/fa';
 
 const HomePage = () => {
-  const aboutRef = useRef(null);
-  const stepsRef = useRef(null);
-
-  const scrollToAbout = () => {
-    aboutRef.current.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const scrollToSteps = () => {
-    stepsRef.current.scrollIntoView({ behavior: 'smooth' });
-  };
-
   return (
     <>
       <Header />
@@ -28,14 +16,11 @@ const HomePage = () => {
           <p className={styles.heroSubtitle}>
             A solução completa para monitorar emissões, consumo energético e eficiência da sua frota.
           </p>
-          <div className={styles.heroButtons}>
-            <button className={styles.ctaButton} onClick={scrollToAbout}>Saiba Mais</button>
-            <button className={styles.secondaryButton} onClick={scrollToSteps}>Comece Agora</button>
-          </div>
+
         </section>
 
         {/* Sobre o Site */}
-        <section ref={aboutRef} className={styles.about}>
+        <section className={styles.about}>
           <h2 className={styles.sectionTitle}>O que é o EcoFleet?</h2>
           <p>
             O EcoFleet é uma plataforma inovadora que combina tecnologia de ponta e práticas sustentáveis para ajudar
@@ -76,7 +61,7 @@ const HomePage = () => {
         </section>
 
         {/* Passo a Passo */}
-        <section ref={stepsRef} className={styles.steps}>
+        <section className={styles.steps}>
           <h2 className={styles.sectionTitle}>Como Utilizar a EcoFleet?</h2>
           <div className={styles.stepCards}>
             <div className={styles.stepCard}>
