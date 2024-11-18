@@ -6,32 +6,49 @@ import Footer from '../components/footer';
 import styles from './Reports.module.css';
 
 export default function ReportsPage() {
-  const [reports, setReports] = useState([]);
-  const [filteredReports, setFilteredReports] = useState([]);
+  // Mock de dados para demonstração
+  const mockReports = [
+    {
+      id: 1,
+      title: 'Relatório 1',
+      date: '2024-11-01',
+      consumption: 100,
+      fuelType: 'Elétrico',
+      content: 'Descrição do relatório 1.',
+    },
+    {
+      id: 2,
+      title: 'Relatório 2',
+      date: '2024-11-02',
+      consumption: 150,
+      fuelType: 'Solar',
+      content: 'Descrição do relatório 2.',
+    },
+    {
+      id: 3,
+      title: 'Relatório 3',
+      date: '2024-11-03',
+      consumption: 200,
+      fuelType: 'Híbrido',
+      content: 'Descrição do relatório 3.',
+    },
+  ];
+
+  const [reports, setReports] = useState(mockReports);
+  const [filteredReports, setFilteredReports] = useState(mockReports);
   const [filters, setFilters] = useState({
     name: '',
     date: '',
     minConsumption: '',
-    maxConsumption: ''
+    maxConsumption: '',
   });
-
-  // Função para buscar relatórios da API
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetch('/api/reports'); // Endpoint para Java ou Python
-      const data = await res.json();
-      setReports(data);
-      setFilteredReports(data); // Define o estado inicial de relatórios filtrados
-    };
-    fetchData();
-  }, []);
 
   // Função para lidar com a entrada dos filtros
   const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFilters((prevFilters) => ({
       ...prevFilters,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -57,7 +74,7 @@ export default function ReportsPage() {
       name: '',
       date: '',
       minConsumption: '',
-      maxConsumption: ''
+      maxConsumption: '',
     });
     setFilteredReports(reports);
   };
