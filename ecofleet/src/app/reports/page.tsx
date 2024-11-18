@@ -27,7 +27,7 @@ export default function ReportsPage() {
   }, []);
 
   // Função para lidar com a entrada dos filtros
-  const handleFilterChange = (e) => {
+  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFilters((prevFilters) => ({
       ...prevFilters,
@@ -40,8 +40,12 @@ export default function ReportsPage() {
     const filtered = reports.filter((report) => {
       const matchesName = filters.name ? report.title === filters.name : true;
       const matchesDate = filters.date ? report.date === filters.date : true;
-      const matchesMinConsumption = filters.minConsumption ? report.consumption >= parseFloat(filters.minConsumption) : true;
-      const matchesMaxConsumption = filters.maxConsumption ? report.consumption <= parseFloat(filters.maxConsumption) : true;
+      const matchesMinConsumption = filters.minConsumption
+        ? report.consumption >= parseFloat(filters.minConsumption)
+        : true;
+      const matchesMaxConsumption = filters.maxConsumption
+        ? report.consumption <= parseFloat(filters.maxConsumption)
+        : true;
       return matchesName && matchesDate && matchesMinConsumption && matchesMaxConsumption;
     });
     setFilteredReports(filtered);
@@ -67,12 +71,11 @@ export default function ReportsPage() {
     <>
       <Header />
       <main className={styles.reports}>
-        
         {/* Card Explicativo */}
         <section className={styles.infoCard}>
           <h2>Sobre a Página de Relatórios</h2>
           <p>
-            Nesta página, você pode visualizar e filtrar relatórios sobre emissões e consumo energético. 
+            Nesta página, você pode visualizar e filtrar relatórios sobre emissões e consumo energético.
             Use as opções abaixo para localizar relatórios específicos.
           </p>
         </section>
@@ -89,7 +92,9 @@ export default function ReportsPage() {
             >
               <option value="">Selecione</option>
               {uniqueNames.map((name) => (
-                <option key={name} value={name}>{name}</option>
+                <option key={name} value={name}>
+                  {name}
+                </option>
               ))}
             </select>
           </div>
@@ -103,7 +108,9 @@ export default function ReportsPage() {
             >
               <option value="">Selecione</option>
               {uniqueDates.map((date) => (
-                <option key={date} value={date}>{date}</option>
+                <option key={date} value={date}>
+                  {date}
+                </option>
               ))}
             </select>
           </div>
@@ -117,7 +124,9 @@ export default function ReportsPage() {
             >
               <option value="">Selecione</option>
               {uniqueConsumptions.map((consumption) => (
-                <option key={consumption} value={consumption}>{consumption} kWh</option>
+                <option key={consumption} value={consumption}>
+                  {consumption} kWh
+                </option>
               ))}
             </select>
           </div>
@@ -131,12 +140,18 @@ export default function ReportsPage() {
             >
               <option value="">Selecione</option>
               {uniqueConsumptions.map((consumption) => (
-                <option key={consumption} value={consumption}>{consumption} kWh</option>
+                <option key={consumption} value={consumption}>
+                  {consumption} kWh
+                </option>
               ))}
             </select>
           </div>
-          <button onClick={applyFilters} className={styles.filterButton}>Aplicar Filtros</button>
-          <button onClick={resetFilters} className={styles.resetButton}>Redefinir Filtros</button>
+          <button onClick={applyFilters} className={styles.filterButton}>
+            Aplicar Filtros
+          </button>
+          <button onClick={resetFilters} className={styles.resetButton}>
+            Redefinir Filtros
+          </button>
         </section>
 
         {/* Lista de Relatórios Filtrados */}
