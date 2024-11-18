@@ -2,6 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Adicione no final do arquivo */
+.footer {
+  background-color: #333;
+  color: #fff;
+  padding: 20px 10px;
+  text-align: center;
+  position: relative;
+  width: 100%;
+  margin-top: auto;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  font-size: 14px;
+}
+
+.footer-link {
+  color: #4caf50;
+  text-decoration: none;
+  margin: 0 5px;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+}
+
+main {
+  flex: 1;
+}
+
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
