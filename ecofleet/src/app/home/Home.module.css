@@ -5,7 +5,6 @@
   text-align: center;
 }
 
-/* Hero Section */
 .hero {
   padding: 100px 20px;
   background: linear-gradient(135deg, #1a535c, #4ecdc4);
@@ -64,7 +63,6 @@
   color: #1a535c;
 }
 
-/* About Section */
 .about {
   margin: 40px 0;
   background: #f7f7f7;
@@ -97,7 +95,6 @@
   margin: 10px 0;
 }
 
-/* Benefits Section */
 .benefits {
   padding: 60px 20px;
   text-align: center;
@@ -183,7 +180,6 @@
   font-weight: bold;
 }
 
-/* Creators Section */
 .creators {
   margin-top: 40px;
 }
