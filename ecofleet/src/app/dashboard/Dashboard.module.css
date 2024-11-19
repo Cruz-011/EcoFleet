@@ -1,157 +1,113 @@
 .dashboardContainer {
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-    background-color: #1e1e1e;
-    color: #f0f0f0;
-  }
-  
-  .sidebar {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    background-color: #333;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .sidebar h3 {
-    margin-bottom: 10px;
-    color: #4ecdc4;
-  }
-  
-  .sidebar label {
-    font-size: 14px;
-    color: #b3b3b3;
-  }
-  
-  .sidebar select {
-    padding: 5px;
-    border-radius: 4px;
-    border: none;
-    background-color: #444;
-    color: #f0f0f0;
-  }
-  
-  .dashboardContent {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .topIndicators {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .indicatorCard {
-    background-color: #333;
-    border-radius: 8px;
-    padding: 10px;
-    text-align: center;
-    color: #4ecdc4;
-    text-shadow: 0 0 5px #4ecdc4;
-  }
-  
-  .chartsGrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-  }
-  
-  .chartCard {
-    position: relative;
-    background-color: #333;
-    padding: 15px;
-    border-radius: 8px;
-    text-align: center;
-    animation: fadeIn 0.5s ease-in-out;
-    overflow: hidden;
-  }
-  
-  .chartCard h3 {
-    font-size: 16px;
-    margin-bottom: 10px;
-    color: #4ecdc4;
-    text-shadow: 0 0 5px #4ecdc4;
-  }
-  
-  /* Contêiner dos Gráficos para ajustar tamanho e responsividade */
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  background-color: #1e1e1e;
+  color: #f0f0f0;
+}
+
+.sidebar {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  background-color: #333;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebar h3 {
+  margin-bottom: 10px;
+  color: #4ecdc4;
+}
+
+.sidebar label {
+  font-size: 14px;
+  color: #b3b3b3;
+}
+
+.sidebar select {
+  padding: 5px;
+  border-radius: 4px;
+  border: none;
+  background-color: #444;
+  color: #f0f0f0;
+}
+
+.dashboardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.topIndicators {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.indicatorCard {
+  background-color: #333;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  color: #4ecdc4;
+  text-shadow: 0 0 5px #4ecdc4;
+}
+
+.chartsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.chartCard {
+  position: relative;
+  background-color: #333;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  animation: fadeIn 0.5s ease-in-out;
+  overflow: hidden;
+}
+
+.chartCard h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #4ecdc4;
+  text-shadow: 0 0 5px #4ecdc4;
+}
+
+/* Contêiner dos Gráficos para ajustar tamanho e responsividade */
+.chartContainer {
+  max-width: 200px; /* Reduz tamanho padrão */
+  max-height: 200px; /* Reduz tamanho padrão */
+  margin: 0 auto;
+}
+
+@media (min-width: 1024px) {
   .chartContainer {
-    max-width: 250px;
-    max-height: 250px;
-    margin: 0 auto;
+    max-width: 180px; /* Reduz ainda mais para telas maiores */
+    max-height: 180px;
   }
-  
-  /* Animações de Fundo Suaves */
-  
-  .co2Background::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, rgba(255,107,107,0.1), transparent);
-    animation: softPulse 5s infinite alternate;
-    opacity: 0.15;
+}
+
+@media (max-width: 768px) {
+  .chartsGrid, .topIndicators {
+    grid-template-columns: 1fr;
   }
-  
-  .energyBackground::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, rgba(30,144,255,0.1), transparent);
-    animation: softPulse 6s infinite alternate;
-    opacity: 0.15;
+
+  .chartContainer {
+    max-width: 150px; /* Reduz tamanho para telas médias */
+    max-height: 150px;
   }
-  
-  .renewableBackground::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, rgba(255,255,0,0.1), transparent);
-    animation: softPulse 7s infinite alternate;
-    opacity: 0.1;
+}
+
+@media (max-width: 480px) {
+  .chartContainer {
+    max-width: 120px; /* Reduz tamanho para telas pequenas */
+    max-height: 120px;
   }
-  
-  .productionBackground::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, rgba(100,255,100,0.1), transparent);
-    animation: softPulse 8s infinite alternate;
-    opacity: 0.1;
-  }
-  
-  /* Keyframes das Animações Suaves */
-  @keyframes softPulse {
-    from { transform: scale(1); opacity: 0.1; }
-    to { transform: scale(1.05); opacity: 0.2; }
-  }
-  
-  /* Responsividade */
-  @media (max-width: 768px) {
-    .chartsGrid, .topIndicators {
-      grid-template-columns: 1fr;
-    }
-  
-    .chartContainer {
-      max-width: 200px;
-      max-height: 200px;
-    }
-  }
-  
+}
