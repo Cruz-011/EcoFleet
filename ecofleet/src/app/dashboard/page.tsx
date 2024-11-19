@@ -9,17 +9,61 @@ import styles from './Dashboard.module.css';
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, LineElement, PointElement, Title, Tooltip, Legend);
 
 export default function SustainabilityDashboard() {
+  const mockData = {
+    2024: {
+      January: {
+        energyConsumption: 3000,
+        solarEnergyGenerated: 1100,
+        totalEmissions: 2600,
+      },
+      February: {
+        energyConsumption: 3200,
+        solarEnergyGenerated: 1200,
+        totalEmissions: 2500,
+      },
+      March: {
+        energyConsumption: 3100,
+        solarEnergyGenerated: 1150,
+        totalEmissions: 2550,
+      },
+    },
+    2023: {
+      January: {
+        energyConsumption: 2900,
+        solarEnergyGenerated: 1000,
+        totalEmissions: 2700,
+      },
+      Todos: {
+        energyConsumption: 3100,
+        solarEnergyGenerated: 1100,
+        totalEmissions: 2700,
+      },
+    },
+  };
+
   const [data, setData] = useState({
     classification: 'Amigável',
     energyConsumption: 3200,
     solarEnergyGenerated: 1200,
     renewableUsage: 37.5,
     productionEfficiency: 85,
-    combustionVehicles: { count: 10, fuelConsumption: 500, co2Emission: 1200 },
-    electricVehicles: { count: 5, energyConsumption: 150, co2Emission: 0 },
     totalEmissions: 2500,
     previousEmissions: 2800,
   });
+
+  const [selectedYear, setSelectedYear] = useState('2024');
+  const [selectedMonth, setSelectedMonth] = useState('Todos');
+
+  useEffect(() => {
+    const yearData = mockData[selectedYear] ? mockData[selectedYear] : mockData['2024'];
+    const monthData = yearData[selectedMonth] || yearData['January'];
+    setData((prev) => ({
+      ...prev,
+      energyConsumption: monthData.energyConsumption,
+      solarEnergyGenerated: monthData.solarEnergyGenerated,
+      totalEmissions: monthData.totalEmissions,
+    }));
+  }, [selectedYear, selectedMonth]);
 
   const emissionsChange = data.previousEmissions - data.totalEmissions;
   const emissionsTrend = emissionsChange > 0 ? 'Redução' : 'Aumento';
@@ -31,16 +75,20 @@ export default function SustainabilityDashboard() {
         <aside className={styles.sidebar}>
           <h3>Filtros</h3>
           <label>Ano</label>
-          <select>
-            <option>Todos</option>
+          <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
+            {Object.keys(mockData).map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
           </select>
           <label>Mês</label>
-          <select>
-            <option>Todos</option>
-          </select>
-          <label>Tipo de Serviço</label>
-          <select>
-            <option>Todos</option>
+          <select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
+            {['Todos', 'January', 'February', 'March'].map((month) => (
+              <option key={month} value={month}>
+                {month}
+              </option>
+            ))}
           </select>
         </aside>
 
@@ -73,11 +121,11 @@ export default function SustainabilityDashboard() {
                     labels: ['Emitido', 'Reduzido'],
                     datasets: [
                       {
-                        data: [data.totalEmissions, data.previousEmissions - data.totalEmissions],
+                        data: [data.totalEmissions, emissionsChange],
                         backgroundColor: ['#ff6b6b', '#4ecdc4'],
-                        borderWidth: 0
-                      }
-                    ]
+                        borderWidth: 0,
+                      },
+                    ],
                   }}
                   options={{ cutout: '80%' }}
                 />
@@ -95,47 +143,9 @@ export default function SustainabilityDashboard() {
                       {
                         label: 'kWh',
                         data: [data.energyConsumption, data.solarEnergyGenerated],
-                        backgroundColor: ['#1a535c', '#4ecdc4']
-                      }
-                    ]
-                  }}
-                  options={{ responsive: true }}
-                />
-              </div>
-            </div>
-
-            <div className={`${styles.chartCard} ${styles.renewableCard}`}>
-              <h3>Uso de Energia Renovável</h3>
-              <div className={`${styles.chartContainer} ${styles.renewableBackground}`}>
-                <Doughnut
-                  data={{
-                    labels: ['Renovável', 'Não Renovável'],
-                    datasets: [
-                      {
-                        data: [data.renewableUsage, 100 - data.renewableUsage],
-                        backgroundColor: ['#4ecdc4', '#e0e0e0']
-                      }
-                    ]
-                  }}
-                  options={{ cutout: '80%' }}
-                />
-              </div>
-            </div>
-
-            <div className={`${styles.chartCard} ${styles.productionCard}`}>
-              <h3>Eficiência de Produção</h3>
-              <div className={`${styles.chartContainer} ${styles.productionBackground}`}>
-                <Line
-                  data={{
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                    datasets: [
-                      {
-                        label: 'Eficiência (%)',
-                        data: [80, 82, 84, 85, 87, 86, 88, 90, 89, 91, 92, 93],
-                        borderColor: '#4ecdc4',
-                        fill: false
-                      }
-                    ]
+                        backgroundColor: ['#1a535c', '#4ecdc4'],
+                      },
+                    ],
                   }}
                   options={{ responsive: true }}
                 />
