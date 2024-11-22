@@ -1,0 +1,141 @@
+.authContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    background: linear-gradient(135deg, #1a535c, #4ecdc4);
+    overflow: hidden;
+    transition: background 0.5s ease-in-out;
+}
+
+.logo {
+    margin-bottom: 20px;
+}
+
+.logoImage {
+    width: 150px;
+    height: auto;
+}
+
+.authCard {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.authCard:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.authForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.inputGroup {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.inputGroup input {
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #011627; /* Texto mais escuro */
+    box-sizing: border-box;
+}
+
+.inputGroup input::placeholder {
+    color: #666666; /* Placeholder mais escuro */
+    font-size: 14px;
+}
+
+.inputGroup input:focus {
+    border-color: #4ecdc4;
+    outline: none;
+    box-shadow: 0 0 4px rgba(78, 205, 196, 0.8);
+}
+
+.submitButton {
+    padding: 12px;
+    background-color: #4ecdc4;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.submitButton:hover {
+    background-color: #1a535c;
+    transform: scale(1.05);
+}
+
+.toggleButton {
+    margin-top: 10px;
+    background: none;
+    color: #1a535c;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.toggleButton:hover {
+    color: #4ecdc4;
+    transform: scale(1.1);
+}
+
+/* Mensagens de Erro e Sucesso */
+.message {
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.errorMessage {
+    background-color: rgba(255, 99, 71, 0.1);
+    color: #ff6347;
+    border: 1px solid #ff6347;
+}
+
+.successMessage {
+    background-color: rgba(144, 238, 144, 0.1);
+    color: #32cd32;
+    border: 1px solid #32cd32;
+}
+
+.authCard h1 {
+    color: #011627; /* Escolha uma cor mais escura para melhorar a visibilidade */
+    font-size: 24px; /* Ajuste o tamanho, se necessário */
+    margin-bottom: 20px; /* Adicione espaçamento para melhorar o layout */
+  } 
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .authCard {
+        width: 95%;
+    }
+
+    .logoImage {
+        width: 120px;
+    }
+}

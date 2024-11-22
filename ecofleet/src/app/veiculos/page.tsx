@@ -1,189 +1,211 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Header from '../components/Header';
 import Footer from '../components/footer';
 import styles from './Veiculos.module.css';
 
+interface Vehicle {
+  id: number;
+  modelo: string;
+  marca: string;
+  consumoEnergetico: number;
+  emissaoCarbono: number;
+}
+
 export default function VehiclesPage() {
-  const [vehicles, setVehicles] = useState<
-    {
-      id: number;
-      name: string;
-      efficiency: string;
-      score: string;
-      cost: string;
-      fuelType: string;
-      monthlyDistance: string;
-    }[]
-  >([]);
-  const [newVehicle, setNewVehicle] = useState({
-    name: '',
-    distance: '',
-    fuel: '',
-    fuelType: 'gasoline',
-    monthlyDistance: ''
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [newVehicle, setNewVehicle] = useState<Vehicle>({
+    id: 0,
+    modelo: '',
+    marca: '',
+    consumoEnergetico: 0,
+    emissaoCarbono: 0,
   });
+  const [editVehicle, setEditVehicle] = useState<Vehicle | null>(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const router = useRouter();
 
-  // Preços médios por tipo de combustível
-  const fuelPrices: { [key: string]: number } = {
-    gasoline: 5.59, // R$ por litro
-    ethanol: 4.09, // R$ por litro
-    diesel: 4.89, // R$ por litro
-    electricity: 0.50 // R$ por kWh
-  };
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const userId = user?.id;
 
-  // Cálculo de eficiência e custo com base no tipo de combustível
-  const calculateEfficiencyAndCost = (
-    distance: number,
-    fuel: number,
-    fuelType: string,
-    monthlyDistance: number
-  ) => {
-    const efficiency = (distance / fuel).toFixed(2); // km/L ou km/kWh
-    const fuelNeededMonthly = (monthlyDistance / parseFloat(efficiency)).toFixed(2); // Consumo mensal estimado
-    const cost = (parseFloat(fuelNeededMonthly) * fuelPrices[fuelType]).toFixed(2); // Custo mensal
+  // Redireciona se não estiver logado
+  useEffect(() => {
+    if (!userId) {
+      alert('Por favor, faça login.');
+      router.push('/login');
+    }
+  }, [userId, router]);
 
-    let score = 'Alta Eficiência';
-    if (parseFloat(efficiency) < 10) score = 'Baixa Eficiência';
-    else if (parseFloat(efficiency) < 15) score = 'Eficiência Média';
-
-    return { efficiency: `${efficiency} km/${fuelType === 'electricity' ? 'kWh' : 'L'}`, score, cost };
-  };
-
-  // Função para lidar com entrada de dados do formulário
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setNewVehicle((prevVehicle) => ({
-      ...prevVehicle,
-      [name]: value,
-    }));
-  };
-
-  // Adicionar um novo veículo
-  const handleAddVehicle = () => {
-    const { name, distance, fuel, fuelType, monthlyDistance } = newVehicle;
-    if (name && distance && fuel && fuelType && monthlyDistance) {
-      const { efficiency, score, cost } = calculateEfficiencyAndCost(
-        Number(distance),
-        Number(fuel),
-        fuelType,
-        Number(monthlyDistance)
-      );
-      const vehicle = { id: Date.now(), name, efficiency, score, cost, fuelType, monthlyDistance };
-      setVehicles((prevVehicles) => [...prevVehicles, vehicle]);
-      setNewVehicle({ name: '', distance: '', fuel: '', fuelType: 'gasoline', monthlyDistance: '' });
-      setShowForm(false);
+  // Função para buscar veículos
+  const fetchVehicles = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/veiculos/usuario/${userId}`);
+      if (!response.ok) throw new Error('Erro ao buscar veículos.');
+      const data = await response.json();
+      setVehicles(data);
+    } catch (error: any) {
+      setErrorMessage(error.message);
     }
   };
 
-  // Alternar exibição do formulário
-  const toggleForm = () => setShowForm(!showForm);
+  useEffect(() => {
+    if (userId) fetchVehicles();
+  }, [userId]);
 
-  // Cálculo do custo total do mês para todos os veículos
-  const totalCost = vehicles.reduce((sum, vehicle) => sum + parseFloat(vehicle.cost), 0).toFixed(2);
+  // Função para lidar com entrada de dados no formulário
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (editVehicle) {
+      setEditVehicle({ ...editVehicle, [name]: value });
+    } else {
+      setNewVehicle({ ...newVehicle, [name]: value });
+    }
+  };
+
+  // Adicionar veículo
+  const handleAddVehicle = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/veiculos`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...newVehicle, idUsuario: userId }),
+      });
+      if (!response.ok) throw new Error('Erro ao cadastrar veículo.');
+      setSuccessMessage('Veículo cadastrado com sucesso!');
+      fetchVehicles();
+      setNewVehicle({ id: 0, modelo: '', marca: '', consumoEnergetico: 0, emissaoCarbono: 0 });
+      setShowForm(false);
+    } catch (error: any) {
+      setErrorMessage(error.message);
+    }
+  };
+
+  // Editar veículo
+  const handleUpdateVehicle = async () => {
+    if (!editVehicle) return;
+    try {
+      const response = await fetch(`http://localhost:8080/api/veiculos/${editVehicle.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editVehicle),
+      });
+      if (!response.ok) throw new Error('Erro ao atualizar veículo.');
+      setSuccessMessage('Veículo atualizado com sucesso!');
+      fetchVehicles();
+      setEditVehicle(null);
+      setShowForm(false);
+    } catch (error: any) {
+      setErrorMessage(error.message);
+    }
+  };
+
+  // Excluir veículo
+  const handleDeleteVehicle = async (id: number) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/veiculos/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Erro ao excluir veículo.');
+      setSuccessMessage('Veículo excluído com sucesso!');
+      fetchVehicles();
+    } catch (error: any) {
+      setErrorMessage(error.message);
+    }
+  };
 
   return (
     <>
       <Header />
       <main className={styles.vehicles}>
         <h1 className={styles.title}>Veículos Monitorados</h1>
-        <p className={styles.description}>
-          Cadastre seus veículos e acompanhe o consumo, eficiência e o custo estimado de combustível por mês.
-        </p>
+        {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
+        {successMessage && <p className={styles.successMessage}>{successMessage}</p>}
 
-        {/* Resumo Financeiro do Mês */}
-        <section className={styles.summary}>
-          <p>Total de Veículos: {vehicles.length}</p>
-          <p>Gasto Total do Mês: R$ {totalCost}</p>
-        </section>
-
-        {/* Botão para Cadastrar Veículo */}
-        <button onClick={toggleForm} className={styles.toggleButton}>
-          {showForm ? 'Fechar Cadastro' : 'Cadastrar Veículo'}
-        </button>
-
-        {/* Formulário de Cadastro Oculto */}
-        {showForm && (
-          <section className={styles.formSection}>
-            <h2 className={styles.formTitle}>Cadastrar Novo Veículo</h2>
-            <div className={styles.formGroup}>
-              <label>Nome do Veículo:</label>
-              <input
-                type="text"
-                name="name"
-                value={newVehicle.name}
-                onChange={handleInputChange}
-                className={styles.input}
-              />
-            </div>
-            <div className={styles.formGroup}>
-              <label>Distância Total Percorrida (km):</label>
-              <input
-                type="number"
-                name="distance"
-                value={newVehicle.distance}
-                onChange={handleInputChange}
-                className={styles.input}
-              />
-            </div>
-            <div className={styles.formGroup}>
-              <label>Consumo Total de Combustível (L ou kWh):</label>
-              <input
-                type="number"
-                name="fuel"
-                value={newVehicle.fuel}
-                onChange={handleInputChange}
-                className={styles.input}
-              />
-            </div>
-            <div className={styles.formGroup}>
-              <label>Tipo de Combustível:</label>
-              <select
-                name="fuelType"
-                value={newVehicle.fuelType}
-                onChange={handleInputChange}
-                className={styles.input}
-              >
-                <option value="gasoline">Gasolina</option>
-                <option value="ethanol">Etanol</option>
-                <option value="diesel">Diesel</option>
-                <option value="electricity">Eletricidade</option>
-              </select>
-            </div>
-            <div className={styles.formGroup}>
-              <label>Quilometragem Estimada por Mês (km):</label>
-              <input
-                type="number"
-                name="monthlyDistance"
-                value={newVehicle.monthlyDistance}
-                onChange={handleInputChange}
-                className={styles.input}
-              />
-            </div>
-            <button onClick={handleAddVehicle} className={styles.addButton}>
-              Adicionar Veículo
-            </button>
-          </section>
-        )}
-
-        {/* Lista de Veículos com Eficiência, Custo e Alertas */}
+        {/* Lista de veículos */}
         <ul className={styles.vehicleList}>
           {vehicles.length > 0 ? (
             vehicles.map((vehicle) => (
               <li key={vehicle.id} className={styles.vehicleItem}>
-                <span className={styles.vehicleName}>{vehicle.name}</span>
-                <span className={styles.vehicleDetails}>
-                  Eficiência: {vehicle.efficiency} - {vehicle.score}
-                  <br />
-                  Consumo Mensal Estimado para {vehicle.monthlyDistance} km: R$ {vehicle.cost}
-                </span>
+                <div className={styles.vehicleInfo}>
+                  <p><strong>Modelo:</strong> {vehicle.modelo}</p>
+                  <p><strong>Marca:</strong> {vehicle.marca}</p>
+                  <p><strong>Consumo:</strong> {vehicle.consumoEnergetico} km/L</p>
+                  <p><strong>Emissões:</strong> {vehicle.emissaoCarbono} kg</p>
+                </div>
+                <div className={styles.vehicleActions}>
+                  <button
+                    onClick={() => {
+                      setEditVehicle(vehicle);
+                      setShowForm(true);
+                    }}
+                    className={`${styles.button} ${styles.editButton}`}
+                  >
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => handleDeleteVehicle(vehicle.id)}
+                    className={`${styles.button} ${styles.deleteButton}`}
+                  >
+                    Excluir
+                  </button>
+                </div>
               </li>
             ))
           ) : (
-            <p className={styles.loadingMessage}>Nenhum veículo cadastrado.</p>
+            <p>Nenhum veículo encontrado.</p>
           )}
         </ul>
+
+        {/* Formulário de cadastro/edição */}
+        <button onClick={() => setShowForm(!showForm)} className={styles.toggleButton}>
+          {showForm ? 'Fechar Formulário' : 'Cadastrar Veículo'}
+        </button>
+        {showForm && (
+          <section className={styles.formSection}>
+            <h2>{editVehicle ? 'Editar Veículo' : 'Cadastrar Veículo'}</h2>
+            <input
+              type="text"
+              name="modelo"
+              placeholder="Modelo"
+              value={editVehicle ? editVehicle.modelo : newVehicle.modelo}
+              onChange={handleInputChange}
+              className={styles.input}
+            />
+            <input
+              type="text"
+              name="marca"
+              placeholder="Marca"
+              value={editVehicle ? editVehicle.marca : newVehicle.marca}
+              onChange={handleInputChange}
+              className={styles.input}
+            />
+            <input
+              type="number"
+              name="consumoEnergetico"
+              placeholder="Consumo Energético (km/L)"
+              value={editVehicle ? editVehicle.consumoEnergetico : newVehicle.consumoEnergetico}
+              onChange={handleInputChange}
+              className={styles.input}
+            />
+            <input
+              type="number"
+              name="emissaoCarbono"
+              placeholder="Emissão de Carbono (kg)"
+              value={editVehicle ? editVehicle.emissaoCarbono : newVehicle.emissaoCarbono}
+              onChange={handleInputChange}
+              className={styles.input}
+            />
+            <button
+              onClick={editVehicle ? handleUpdateVehicle : handleAddVehicle}
+              className={styles.addButton}
+            >
+              {editVehicle ? 'Salvar Alterações' : 'Adicionar Veículo'}
+            </button>
+          </section>
+        )}
       </main>
       <Footer />
     </>

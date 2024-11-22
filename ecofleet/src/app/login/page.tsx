@@ -14,60 +14,80 @@ export default function AuthPage() {
     confirmPassword: '',
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const router = useRouter();
 
+  // Alternar entre login e registro
   const toggleAuthMode = () => {
     setIsLogin(!isLogin);
     setFormData({ name: '', email: '', password: '', confirmPassword: '' });
+    setErrorMessage('');
+    setSuccessMessage('');
   };
 
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
+  const toggleShowPassword = () => setShowPassword(!showPassword);
 
+  // Atualizar o formulário
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Submissão do formulário
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (isLogin) {
-      const storedUsers = JSON.parse(localStorage.getItem('users') || '[]');
-      const userExists = storedUsers.find(
-        (user: { email: string; password: string }) =>
-          user.email === formData.email && user.password === formData.password
-      );
+      // LOGIN
+      try {
+        const response = await fetch(`http://localhost:8080/api/usuarios/${formData.email}`);
+        if (!response.ok) throw new Error('Usuário ou senha inválidos.');
 
-      if (userExists) {
-        localStorage.setItem('auth', 'true');
-        alert('Login bem-sucedido!');
-        router.push('/dashboard');
-      } else {
-        alert('Credenciais inválidas!');
+        const user = await response.json();
+
+        if (user.senha === formData.password) {
+          setSuccessMessage('Login realizado com sucesso!');
+          setErrorMessage('');
+          // Redirecionar para o dashboard
+          localStorage.setItem('auth', 'true');
+          localStorage.setItem('user', JSON.stringify(user));
+          router.push('/dashboard');
+        } else {
+          throw new Error('Senha incorreta.');
+        }
+      } catch (error: any) {
+        setErrorMessage(error.message || 'Erro ao realizar login.');
+        setSuccessMessage('');
       }
     } else {
+      // REGISTRO
       if (formData.password !== formData.confirmPassword) {
-        alert('As senhas não coincidem!');
+        setErrorMessage('As senhas não coincidem!');
         return;
       }
 
-      const storedUsers = JSON.parse(localStorage.getItem('users') || '[]');
-      const userExists = storedUsers.find(
-        (user: { email: string }) => user.email === formData.email
-      );
-
-      if (userExists) {
-        alert('Este email já está registrado!');
-      } else {
-        storedUsers.push({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
+      try {
+        const response = await fetch('http://localhost:8080/api/usuarios', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nome: formData.name,
+            email: formData.email,
+            senha: formData.password,
+          }),
         });
-        localStorage.setItem('users', JSON.stringify(storedUsers));
-        alert('Registro concluído! Agora faça login.');
+
+        if (!response.ok) {
+          const error = await response.text();
+          throw new Error(error || 'Erro ao registrar usuário.');
+        }
+
+        setSuccessMessage('Registro concluído! Agora faça login.');
+        setErrorMessage('');
         setIsLogin(true);
+      } catch (error: any) {
+        setErrorMessage(error.message || 'Erro ao registrar usuário.');
+        setSuccessMessage('');
       }
     }
   };
@@ -77,7 +97,7 @@ export default function AuthPage() {
       <div className={styles.logo}>
         <Image
           src="/images/ecofleet-logo.png"
-          alt="Logo "
+          alt="Logo EcoFleet"
           width={200}
           height={200}
           className={styles.logoImage}
@@ -85,6 +105,8 @@ export default function AuthPage() {
       </div>
       <div className={styles.authCard}>
         <h1>{isLogin ? 'LOGIN' : 'REGISTRO'}</h1>
+        {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
+        {successMessage && <p className={styles.successMessage}>{successMessage}</p>}
         <form className={styles.authForm} onSubmit={handleSubmit}>
           {!isLogin && (
             <div className={styles.inputGroup}>
