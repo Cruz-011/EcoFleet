@@ -1,154 +1,147 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Header from '../components/Header';
 import Footer from '../components/footer';
-import { Bar, Doughnut } from 'react-chartjs-2';
+import { Bar, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend } from 'chart.js';
 import styles from './Dashboard.module.css';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
 
+interface Vehicle {
+  id: number;
+  modelo: string;
+  marca: string;
+  consumoEnergetico: number; // Consumo em km/L
+  emissaoCarbono: number; // Emissões em kg
+}
+
 export default function SustainabilityDashboard() {
-  const mockData: Record<string, any> = {
-    2024: {
-      Todos: {
-        energyConsumption: 9400,
-        solarEnergyGenerated: 3450,
-        totalEmissions: 7700,
-      },
-      January: {
-        energyConsumption: 3000,
-        solarEnergyGenerated: 1100,
-        totalEmissions: 2600,
-      },
-      February: {
-        energyConsumption: 3200,
-        solarEnergyGenerated: 1200,
-        totalEmissions: 2500,
-      },
-      March: {
-        energyConsumption: 3100,
-        solarEnergyGenerated: 1150,
-        totalEmissions: 2550,
-      },
-    },
-    2023: {
-      Todos: {
-        energyConsumption: 8900,
-        solarEnergyGenerated: 3400,
-        totalEmissions: 7800,
-      },
-      January: {
-        energyConsumption: 2900,
-        solarEnergyGenerated: 1000,
-        totalEmissions: 2700,
-      },
-    },
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [data, setData] = useState({
+    totalVehicles: 0,
+    totalFuelConsumption: 0, // Combustível consumido no total (L)
+    totalEmissions: 0, // Total de emissões em kg
+    averageEfficiency: 0, // Eficiência média (km/L)
+  });
+  const [errorMessage, setErrorMessage] = useState('');
+  const router = useRouter();
+
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const userId = user?.id;
+
+  // Redireciona se não estiver logado
+  useEffect(() => {
+    if (!userId) {
+      alert('Por favor, faça login.');
+      router.push('/login');
+    }
+  }, [userId, router]);
+
+  // Função para buscar veículos do usuário
+  const fetchVehicles = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/veiculos/usuario/${userId}`);
+      if (!response.ok) throw new Error('Erro ao buscar veículos.');
+      const vehicleData = await response.json();
+
+      setVehicles(vehicleData);
+
+      // Calcula dados do dashboard
+      const totalVehicles = vehicleData.length;
+      const totalFuelConsumption = vehicleData.reduce(
+        (sum: number, vehicle: Vehicle) => sum + vehicle.consumoEnergetico * 100, // Estimando consumo em 100 km
+        0
+      );
+      const totalEmissions = vehicleData.reduce(
+        (sum: number, vehicle: Vehicle) => sum + vehicle.emissaoCarbono,
+        0
+      );
+      const averageEfficiency = totalVehicles
+        ? (totalFuelConsumption / totalVehicles).toFixed(2)
+        : 0;
+
+      setData({
+        totalVehicles,
+        totalFuelConsumption,
+        totalEmissions,
+        averageEfficiency: Number(averageEfficiency),
+      });
+    } catch (error: any) {
+      setErrorMessage(error.message);
+    }
   };
 
-  const [data, setData] = useState({
-    energyConsumption: 9400,
-    solarEnergyGenerated: 3450,
-    totalEmissions: 7700,
-    renewableUsage: 37.5,
-    productionEfficiency: 85,
-    previousEmissions: 8000,
-  });
-
-  const [selectedYear, setSelectedYear] = useState('2024');
-  const [selectedMonth, setSelectedMonth] = useState('Todos');
-
   useEffect(() => {
-    const yearData = mockData[selectedYear] || mockData['2024'];
-    const monthData = yearData[selectedMonth] || yearData['Todos'];
-    setData((prev) => ({
-      ...prev,
-      energyConsumption: monthData.energyConsumption,
-      solarEnergyGenerated: monthData.solarEnergyGenerated,
-      totalEmissions: monthData.totalEmissions,
-    }));
-  }, [selectedYear, selectedMonth]);
-
-  const emissionsChange = data.previousEmissions - data.totalEmissions;
-  const emissionsTrend = emissionsChange > 0 ? 'Redução' : 'Aumento';
+    if (userId) fetchVehicles();
+  }, [userId]);
 
   return (
     <>
       <Header />
       <div className={styles.dashboardContainer}>
+        {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
         <aside className={styles.sidebar}>
-          <h3>Filtros</h3>
-          <label>Ano</label>
-          <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
-            {Object.keys(mockData).map((year) => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
-          </select>
-          <label>Mês</label>
-          <select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
-            {['Todos', 'January', 'February', 'March'].map((month) => (
-              <option key={month} value={month}>
-                {month}
-              </option>
-            ))}
-          </select>
+          <h3>Resumo</h3>
+          <p><strong>Usuário:</strong> {user?.nome || 'Não identificado'}</p>
+          <p><strong>Total de Veículos:</strong> {data.totalVehicles}</p>
+          <p><strong>Média de Eficiência:</strong> {data.averageEfficiency} km/L</p>
         </aside>
 
         <main className={styles.dashboardContent}>
           <div className={styles.topIndicators}>
             <div className={styles.indicatorCard}>
-              <h4>Consumo de Energia</h4>
-              <p>{data.energyConsumption} kWh</p>
-            </div>
-            <div className={styles.indicatorCard}>
-              <h4>Energia Solar Gerada</h4>
-              <p>{data.solarEnergyGenerated} kWh</p>
+              <h4>Consumo Total de Combustível</h4>
+              <p>{data.totalFuelConsumption} L</p>
             </div>
             <div className={styles.indicatorCard}>
               <h4>Emissões de CO₂</h4>
               <p>{data.totalEmissions} kg</p>
             </div>
             <div className={styles.indicatorCard}>
-              <h4>Eficiência de Produção</h4>
-              <p>{data.productionEfficiency}%</p>
+              <h4>Total de Veículos</h4>
+              <p>{data.totalVehicles}</p>
             </div>
           </div>
 
           <div className={styles.chartsGrid}>
             <div className={`${styles.chartCard} ${styles.co2Card}`}>
-              <h3>Emissões de CO₂</h3>
-              <Doughnut
+              <h3>Distribuição de Emissões</h3>
+              <Pie
                 data={{
-                  labels: ['Emitido', 'Reduzido'],
+                  labels: vehicles.map((vehicle) => vehicle.modelo),
                   datasets: [
                     {
-                      data: [data.totalEmissions, emissionsChange],
-                      backgroundColor: ['#ff6b6b', '#4ecdc4'],
-                      borderWidth: 0,
-                    },
-                  ],
-                }}
-                options={{ cutout: '80%' }}
-              />
-              <p>{emissionsTrend} em relação ao mês anterior</p>
-            </div>
-
-            <div className={`${styles.chartCard} ${styles.energyCard}`}>
-              <h3>Consumo de Energia</h3>
-              <Bar
-                data={{
-                  labels: ['Consumido', 'Gerado Solar'],
-                  datasets: [
-                    {
-                      label: 'kWh',
-                      data: [data.energyConsumption, data.solarEnergyGenerated],
-                      backgroundColor: ['#1a535c', '#4ecdc4'],
+                      data: vehicles.map((vehicle) => vehicle.emissaoCarbono),
+                      backgroundColor: ['#ff6b6b', '#4ecdc4', '#1a535c', '#f7b32b', '#5f4b66'],
+                      borderWidth: 1,
                     },
                   ],
                 }}
                 options={{ responsive: true }}
+              />
+            </div>
+
+            <div className={`${styles.chartCard} ${styles.energyCard}`}>
+              <h3>Eficiência por Veículo</h3>
+              <Bar
+                data={{
+                  labels: vehicles.map((vehicle) => vehicle.modelo),
+                  datasets: [
+                    {
+                      label: 'Eficiência (km/L)',
+                      data: vehicles.map((vehicle) => vehicle.consumoEnergetico),
+                      backgroundColor: '#4ecdc4',
+                    },
+                  ],
+                }}
+                options={{
+                  responsive: true,
+                  plugins: {
+                    legend: { display: false },
+                  },
+                }}
               />
             </div>
           </div>

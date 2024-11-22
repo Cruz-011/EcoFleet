@@ -3,189 +3,105 @@
 import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/footer';
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import styles from './Reports.module.css';
 
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+interface Vehicle {
+  id: number;
+  modelo: string;
+  marca: string;
+  consumoEnergetico: number;
+  emissaoCarbono: number;
+}
+
 export default function ReportsPage() {
-  // Mock de dados para demonstração
-  const mockReports = [
-    {
-      id: 1,
-      title: 'Relatório 1',
-      date: '2024-11-01',
-      consumption: 100,
-      fuelType: 'Elétrico',
-      content: 'Descrição do relatório 1.',
-    },
-    {
-      id: 2,
-      title: 'Relatório 2',
-      date: '2024-11-02',
-      consumption: 150,
-      fuelType: 'Solar',
-      content: 'Descrição do relatório 2.',
-    },
-    {
-      id: 3,
-      title: 'Relatório 3',
-      date: '2024-11-03',
-      consumption: 200,
-      fuelType: 'Híbrido',
-      content: 'Descrição do relatório 3.',
-    },
-  ];
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [errorMessage, setErrorMessage] = useState('');
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const userId = user?.id;
 
-  const [reports, setReports] = useState(mockReports);
-  const [filteredReports, setFilteredReports] = useState(mockReports);
-  const [filters, setFilters] = useState({
-    name: '',
-    date: '',
-    minConsumption: '',
-    maxConsumption: '',
-  });
+  useEffect(() => {
+    if (!userId) {
+      alert('Por favor, faça login.');
+      window.location.href = '/login';
+    }
+  }, [userId]);
 
-  // Função para lidar com a entrada dos filtros
-  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      [name]: value,
-    }));
+  const fetchVehicles = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/veiculos/usuario/${userId}`);
+      if (!response.ok) throw new Error('Erro ao buscar dados dos veículos.');
+      const data = await response.json();
+      setVehicles(data);
+    } catch (error: any) {
+      setErrorMessage(error.message);
+    }
   };
 
-  // Função para aplicar filtros
-  const applyFilters = () => {
-    const filtered = reports.filter((report) => {
-      const matchesName = filters.name ? report.title === filters.name : true;
-      const matchesDate = filters.date ? report.date === filters.date : true;
-      const matchesMinConsumption = filters.minConsumption
-        ? report.consumption >= parseFloat(filters.minConsumption)
-        : true;
-      const matchesMaxConsumption = filters.maxConsumption
-        ? report.consumption <= parseFloat(filters.maxConsumption)
-        : true;
-      return matchesName && matchesDate && matchesMinConsumption && matchesMaxConsumption;
-    });
-    setFilteredReports(filtered);
+  useEffect(() => {
+    if (userId) fetchVehicles();
+  }, [userId]);
+
+  const totalEmissions = vehicles.reduce((sum, vehicle) => sum + vehicle.emissaoCarbono, 0);
+  const totalEfficiency = vehicles.reduce((sum, vehicle) => sum + vehicle.consumoEnergetico, 0) / (vehicles.length || 1);
+
+  const emissionsData = {
+    labels: vehicles.map((vehicle) => vehicle.modelo),
+    datasets: [
+      {
+        label: 'Emissões (kg)',
+        data: vehicles.map((vehicle) => vehicle.emissaoCarbono),
+        backgroundColor: '#ff6b6b',
+      },
+    ],
   };
 
-  // Função para redefinir filtros
-  const resetFilters = () => {
-    setFilters({
-      name: '',
-      date: '',
-      minConsumption: '',
-      maxConsumption: '',
-    });
-    setFilteredReports(reports);
+  const efficiencyData = {
+    labels: vehicles.map((vehicle) => vehicle.modelo),
+    datasets: [
+      {
+        label: 'Eficiência (km/L)',
+        data: vehicles.map((vehicle) => vehicle.consumoEnergetico),
+        backgroundColor: '#4ecdc4',
+      },
+    ],
   };
-
-  // Obter valores únicos para os campos de seleção
-  const uniqueNames = [...new Set(reports.map((report) => report.title))];
-  const uniqueDates = [...new Set(reports.map((report) => report.date))];
-  const uniqueConsumptions = [...new Set(reports.map((report) => report.consumption))];
 
   return (
     <>
       <Header />
       <main className={styles.reports}>
-        {/* Card Explicativo */}
+        {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
         <section className={styles.infoCard}>
-          <h2>Sobre a Página de Relatórios</h2>
+          <h2>Relatórios Detalhados</h2>
           <p>
-            Nesta página, você pode visualizar e filtrar relatórios sobre emissões e consumo energético.
-            Use as opções abaixo para localizar relatórios específicos.
+            Aqui você encontra informações detalhadas sobre o desempenho e impacto ambiental de seus veículos.
           </p>
         </section>
 
-        {/* Formulário de Filtros Básicos */}
-        <section className={styles.filters}>
-          <div className={styles.filterGroup}>
-            <label>Nome do Relatório:</label>
-            <select
-              name="name"
-              value={filters.name}
-              onChange={handleFilterChange}
-              className={styles.input}
-            >
-              <option value="">Selecione</option>
-              {uniqueNames.map((name) => (
-                <option key={name} value={name}>
-                  {name}
-                </option>
-              ))}
-            </select>
+        <section className={styles.reportDetails}>
+          <div>
+            <h3>Total de Emissões (kg):</h3>
+            <p>{totalEmissions.toFixed(2)}</p>
           </div>
-          <div className={styles.filterGroup}>
-            <label>Data:</label>
-            <select
-              name="date"
-              value={filters.date}
-              onChange={handleFilterChange}
-              className={styles.input}
-            >
-              <option value="">Selecione</option>
-              {uniqueDates.map((date) => (
-                <option key={date} value={date}>
-                  {date}
-                </option>
-              ))}
-            </select>
+          <div>
+            <h3>Eficiência Média (km/L):</h3>
+            <p>{totalEfficiency.toFixed(2)}</p>
           </div>
-          <div className={styles.filterGroup}>
-            <label>Consumo Mínimo (kWh):</label>
-            <select
-              name="minConsumption"
-              value={filters.minConsumption}
-              onChange={handleFilterChange}
-              className={styles.input}
-            >
-              <option value="">Selecione</option>
-              {uniqueConsumptions.map((consumption) => (
-                <option key={consumption} value={consumption}>
-                  {consumption} kWh
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className={styles.filterGroup}>
-            <label>Consumo Máximo (kWh):</label>
-            <select
-              name="maxConsumption"
-              value={filters.maxConsumption}
-              onChange={handleFilterChange}
-              className={styles.input}
-            >
-              <option value="">Selecione</option>
-              {uniqueConsumptions.map((consumption) => (
-                <option key={consumption} value={consumption}>
-                  {consumption} kWh
-                </option>
-              ))}
-            </select>
-          </div>
-          <button onClick={applyFilters} className={styles.filterButton}>
-            Aplicar Filtros
-          </button>
-          <button onClick={resetFilters} className={styles.resetButton}>
-            Redefinir Filtros
-          </button>
         </section>
 
-        {/* Lista de Relatórios Filtrados */}
-        <section className={styles.reportList}>
-          {filteredReports.length ? (
-            filteredReports.map((report) => (
-              <div key={report.id} className={styles.reportItem}>
-                <h3>{report.title}</h3>
-                <p>Data: {report.date}</p>
-                <p>Consumo: {report.consumption} kWh</p>
-                <p>Tipo de Combustível: {report.fuelType}</p>
-                <p>{report.content}</p>
-              </div>
-            ))
-          ) : (
-            <p className={styles.noReports}>Nenhum relatório disponível.</p>
-          )}
+        <section className={styles.charts}>
+          <div className={styles.chartCard}>
+            <h3>Emissões por Veículo</h3>
+            <Bar data={emissionsData} options={{ responsive: true }} />
+          </div>
+          <div className={styles.chartCard}>
+            <h3>Eficiência por Veículo</h3>
+            <Bar data={efficiencyData} options={{ responsive: true }} />
+          </div>
         </section>
       </main>
       <Footer />
