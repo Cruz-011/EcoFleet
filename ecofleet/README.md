@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EcoFleet Dashboard
 
-## Getting Started
 
-First, run the development server:
+## 🚀 Sobre o Projeto
 
-```bash
+O **EcoFleet Dashboard** é uma plataforma inovadora e futurista projetada para monitorar e gerenciar emissões de carbono, consumo energético e eficiência de veículos. Nossa solução é ideal para empresas que desejam reduzir custos, otimizar operações e contribuir para a sustentabilidade ambiental.
+
+## 🌟 Funcionalidades Principais
+
+- **Dashboard Interativo**: Visualize dados em tempo real sobre consumo de energia, eficiência de produção, uso de energia renovável e emissões de CO₂.
+- **Login e Registro**: Autenticação segura com interface intuitiva e animações modernas.
+- **Filtros Avançados**: Customize os dados exibidos no dashboard por ano, mês e tipo de serviço.
+- **Gráficos Dinâmicos**: Gráficos circulares e de barras para representação clara dos dados.
+- **Design Futurista**: Interface moderna com elementos 3D e animações interativas.
+
+## 🔧 Tecnologias Utilizadas
+
+- **Frontend**: [Next.js](https://nextjs.org/), [React](https://reactjs.org/), [Chart.js](https://www.chartjs.org/)
+- **Estilização**: CSS Modules, animações com CSS e React
+- **Backend**: java, python.oracleBDA
+- **Autenticação**: Armazenamento local para login e registro
+- **Recursos Visuais**: Integração de modelos 3D com animações para uma experiência imersiva
+
+
+
+## 🛠 Como Configurar o Projeto
+
+1. **Clone o Repositório**
+   ```bash
+   git clone https://github.com/seuusuario/ecofleet-dashboard.git
+   cd ecofleet-dashboard
+Instale as Dependências
+
+bash
+Copiar código
+npm install
+Inicie o Servidor de Desenvolvimento
+
+bash
+Copiar código
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Acesse no Navegador Abra http://localhost:3000 para visualizar o projeto.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+🌱 Registro e Login
+Registro: Insira o nome, e-mail, senha e confirmação de senha para criar uma conta.
+Login: Acesse sua conta com o e-mail e senha cadastrados.
+Armazenamento de Credenciais: O sistema usa armazenamento local para simular a autenticação.
+bash
+Copiar código
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+🎯 Próximos Passos
+ Integração com APIs externas para dados reais.
+ Melhorias nas animações e recursos 3D.
+ Configuração de autenticação completa com backend.
+ Exportação de relatórios em PDF.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Desenvolvido com carinho e amor por InnovexGroup

@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import Image from 'next/image'; // Usar para a logo
-import { FaHome, FaCar, FaChartLine, FaTachometerAlt } from 'react-icons/fa';
+import Image from 'next/image';
+import { FaHome, FaCar, FaChartLine, FaTachometerAlt, FaUserAlt } from 'react-icons/fa';
 import styles from './Header.module.css';
 
 export default function Header() {
@@ -9,7 +9,12 @@ export default function Header() {
       <div className={styles.logoContainer}>
         <Link href="/">
           <Image
-            src="/images/ecofleet-logo.png" alt="" width={120} height={40} className={styles.logo}/>
+            src="/images/ecofleet-logo.png"
+            alt="EcoFleet Logo"
+            width={120}
+            height={40}
+            className={styles.logo}
+          />
         </Link>
       </div>
 
@@ -29,6 +34,10 @@ export default function Header() {
         <Link href="/dashboard" className={styles.navLink}>
           <FaTachometerAlt className={styles.icon} />
           <span>Dashboard</span>
+        </Link>
+        <Link href="/login" className={styles.navLink}>
+          <FaUserAlt className={styles.icon} />
+          <span>Login/Registrar</span>
         </Link>
       </nav>
     </header>
