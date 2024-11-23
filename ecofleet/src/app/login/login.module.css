@@ -8,6 +8,7 @@
   background: linear-gradient(135deg, #1a535c, #4ecdc4);
   overflow: hidden;
   transition: background 0.5s ease-in-out;
+  color: black;
 }
 
 .logo {
@@ -49,6 +50,7 @@
 }
 
 .inputGroup input {
+  width: 100%;
   padding: 12px;
   font-size: 16px;
   border: 1px solid #ccc;
@@ -67,6 +69,28 @@
   border-color: #4ecdc4;
   outline: none;
   box-shadow: 0 0 4px rgba(78, 205, 196, 0.8);
+}
+
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.passwordWrapper input {
+  flex: 1;
+}
+
+.togglePassword {
+  position: absolute;
+  right: 12px;
+  cursor: pointer;
+  color: #666666;
+  transition: color 0.3s ease;
+}
+
+.togglePassword:hover {
+  color: #4ecdc4;
 }
 
 .submitButton {
@@ -102,7 +126,6 @@
   transform: scale(1.1);
 }
 
-/* Mensagens de Erro e Sucesso */
 .message {
   font-size: 14px;
   margin-top: 10px;
@@ -124,18 +147,17 @@
 }
 
 .authCard h1 {
-  color: #011627; /* Escolha uma cor mais escura para melhorar a visibilidade */
-  font-size: 24px; /* Ajuste o tamanho, se necessário */
-  margin-bottom: 20px; /* Adicione espaçamento para melhorar o layout */
-} 
+  color: #011627;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
 
-/* Responsividade */
 @media (max-width: 768px) {
   .authCard {
-      width: 95%;
+    width: 95%;
   }
 
   .logoImage {
-      width: 120px;
+    width: 120px;
   }
 }
