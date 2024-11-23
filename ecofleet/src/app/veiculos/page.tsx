@@ -1,6 +1,5 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Header from '../components/Header';
 import Footer from '../components/footer';
 import styles from './Veiculos.module.css';
@@ -26,44 +25,6 @@ export default function VehiclesPage() {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [showForm, setShowForm] = useState(false);
-  const [userId, setUserId] = useState<number | null>(null);
-  const router = useRouter();
-
-  // Obter o ID do usuário do localStorage (apenas no cliente)
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedUser = localStorage.getItem('user');
-      if (storedUser) {
-        try {
-          const parsedUser = JSON.parse(storedUser);
-          setUserId(parsedUser.id);
-        } catch (error) {
-          console.error('Erro ao analisar o usuário do localStorage:', error);
-          alert('Por favor, faça login novamente.');
-          router.push('/login');
-        }
-      } else {
-        alert('Por favor, faça login.');
-        router.push('/login');
-      }
-    }
-  }, [router]);
-
-  // Função para buscar veículos
-  const fetchVehicles = async () => {
-    try {
-      const response = await fetch(`http://localhost:8080/api/veiculos/usuario/${userId}`);
-      if (!response.ok) throw new Error('Erro ao buscar veículos.');
-      const data = await response.json();
-      setVehicles(data);
-    } catch (error: any) {
-      setErrorMessage(error.message);
-    }
-  };
-
-  useEffect(() => {
-    if (userId) fetchVehicles();
-  }, [userId]);
 
   // Função para lidar com entrada de dados no formulário
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,55 +36,32 @@ export default function VehiclesPage() {
     }
   };
 
-  // Adicionar veículo
-  const handleAddVehicle = async () => {
-    try {
-      const response = await fetch(`http://localhost:8080/api/veiculos`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...newVehicle, idUsuario: userId }),
-      });
-      if (!response.ok) throw new Error('Erro ao cadastrar veículo.');
-      setSuccessMessage('Veículo cadastrado com sucesso!');
-      fetchVehicles();
-      setNewVehicle({ id: 0, modelo: '', marca: '', consumoEnergetico: 0, emissaoCarbono: 0 });
-      setShowForm(false);
-    } catch (error: any) {
-      setErrorMessage(error.message);
-    }
+  // Função de Adicionar Veículo (simulado localmente)
+  const handleAddVehicle = () => {
+    const newId = vehicles.length + 1;
+    setVehicles([...vehicles, { ...newVehicle, id: newId }]);
+    setNewVehicle({ id: 0, modelo: '', marca: '', consumoEnergetico: 0, emissaoCarbono: 0 });
+    setSuccessMessage('Veículo adicionado com sucesso!');
+    setShowForm(false);
   };
 
   // Editar veículo
-  const handleUpdateVehicle = async () => {
+  const handleUpdateVehicle = () => {
     if (!editVehicle) return;
-    try {
-      const response = await fetch(`http://localhost:8080/api/veiculos/${editVehicle.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editVehicle),
-      });
-      if (!response.ok) throw new Error('Erro ao atualizar veículo.');
-      setSuccessMessage('Veículo atualizado com sucesso!');
-      fetchVehicles();
-      setEditVehicle(null);
-      setShowForm(false);
-    } catch (error: any) {
-      setErrorMessage(error.message);
-    }
+    const updatedVehicles = vehicles.map((v) =>
+      v.id === editVehicle.id ? editVehicle : v
+    );
+    setVehicles(updatedVehicles);
+    setEditVehicle(null);
+    setSuccessMessage('Veículo atualizado com sucesso!');
+    setShowForm(false);
   };
 
   // Excluir veículo
-  const handleDeleteVehicle = async (id: number) => {
-    try {
-      const response = await fetch(`http://localhost:8080/api/veiculos/${id}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) throw new Error('Erro ao excluir veículo.');
-      setSuccessMessage('Veículo excluído com sucesso!');
-      fetchVehicles();
-    } catch (error: any) {
-      setErrorMessage(error.message);
-    }
+  const handleDeleteVehicle = (id: number) => {
+    const filteredVehicles = vehicles.filter((v) => v.id !== id);
+    setVehicles(filteredVehicles);
+    setSuccessMessage('Veículo excluído com sucesso!');
   };
 
   return (
@@ -176,38 +114,54 @@ export default function VehiclesPage() {
         {showForm && (
           <section className={styles.formSection}>
             <h2>{editVehicle ? 'Editar Veículo' : 'Cadastrar Veículo'}</h2>
-            <input
-              type="text"
-              name="modelo"
-              placeholder="Modelo"
-              value={editVehicle ? editVehicle.modelo : newVehicle.modelo}
-              onChange={handleInputChange}
-              className={styles.input}
-            />
-            <input
-              type="text"
-              name="marca"
-              placeholder="Marca"
-              value={editVehicle ? editVehicle.marca : newVehicle.marca}
-              onChange={handleInputChange}
-              className={styles.input}
-            />
-            <input
-              type="number"
-              name="consumoEnergetico"
-              placeholder="Consumo Energético (km/L)"
-              value={editVehicle ? editVehicle.consumoEnergetico : newVehicle.consumoEnergetico}
-              onChange={handleInputChange}
-              className={styles.input}
-            />
-            <input
-              type="number"
-              name="emissaoCarbono"
-              placeholder="Emissão de Carbono (kg)"
-              value={editVehicle ? editVehicle.emissaoCarbono : newVehicle.emissaoCarbono}
-              onChange={handleInputChange}
-              className={styles.input}
-            />
+            <div className={styles.formGroup}>
+              <label htmlFor="modelo">Modelo</label>
+              <input
+                type="text"
+                id="modelo"
+                name="modelo"
+                placeholder="Digite o modelo"
+                value={editVehicle ? editVehicle.modelo : newVehicle.modelo}
+                onChange={handleInputChange}
+                className={styles.input}
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="marca">Marca</label>
+              <input
+                type="text"
+                id="marca"
+                name="marca"
+                placeholder="Digite a marca"
+                value={editVehicle ? editVehicle.marca : newVehicle.marca}
+                onChange={handleInputChange}
+                className={styles.input}
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="consumoEnergetico">Consumo Energético (km/L)</label>
+              <input
+                type="number"
+                id="consumoEnergetico"
+                name="consumoEnergetico"
+                placeholder="Consumo por km/L"
+                value={editVehicle ? editVehicle.consumoEnergetico : newVehicle.consumoEnergetico}
+                onChange={handleInputChange}
+                className={styles.input}
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="emissaoCarbono">Emissão de Carbono (kg)</label>
+              <input
+                type="number"
+                id="emissaoCarbono"
+                name="emissaoCarbono"
+                placeholder="Emissões em kg"
+                value={editVehicle ? editVehicle.emissaoCarbono : newVehicle.emissaoCarbono}
+                onChange={handleInputChange}
+                className={styles.input}
+              />
+            </div>
             <button
               onClick={editVehicle ? handleUpdateVehicle : handleAddVehicle}
               className={styles.addButton}

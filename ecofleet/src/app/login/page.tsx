@@ -18,7 +18,6 @@ export default function AuthPage() {
   const [successMessage, setSuccessMessage] = useState('');
   const router = useRouter();
 
-  // Alternar entre login e registro
   const toggleAuthMode = () => {
     setIsLogin(!isLogin);
     setFormData({ name: '', email: '', password: '', confirmPassword: '' });
@@ -28,67 +27,52 @@ export default function AuthPage() {
 
   const toggleShowPassword = () => setShowPassword(!showPassword);
 
-  // Atualizar o formulário
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Submissão do formulário
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (isLogin) {
-      // LOGIN
-      try {
-        const response = await fetch(`http://localhost:8080/api/usuarios/${formData.email}`);
-        if (!response.ok) throw new Error('Usuário ou senha inválidos.');
+      // LOGIN LOCAL
+      const storedUsers = JSON.parse(localStorage.getItem('users') || '{}');
+      const user = storedUsers[formData.email];
 
-        const user = await response.json();
-
-        if (user.senha === formData.password) {
-          setSuccessMessage('Login realizado com sucesso!');
-          setErrorMessage('');
-          // Redirecionar para o dashboard
-          localStorage.setItem('auth', 'true');
-          localStorage.setItem('user', JSON.stringify(user));
-          router.push('/dashboard');
-        } else {
-          throw new Error('Senha incorreta.');
-        }
-      } catch (error: any) {
-        setErrorMessage(error.message || 'Erro ao realizar login.');
+      if (user && user.password === formData.password) {
+        setSuccessMessage('Login realizado com sucesso!');
+        setErrorMessage('');
+        localStorage.setItem('auth', 'true');
+        localStorage.setItem('loggedInUser', JSON.stringify(user));
+        router.push('/home'); // Redireciona para a página "Home"
+      } else {
+        setErrorMessage('Email ou senha inválidos.');
         setSuccessMessage('');
       }
     } else {
-      // REGISTRO
+      // REGISTRO LOCAL
       if (formData.password !== formData.confirmPassword) {
         setErrorMessage('As senhas não coincidem!');
         return;
       }
 
-      try {
-        const response = await fetch('http://localhost:8080/api/usuarios', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            nome: formData.name,
-            email: formData.email,
-            senha: formData.password,
-          }),
-        });
+      const storedUsers = JSON.parse(localStorage.getItem('users') || '{}');
 
-        if (!response.ok) {
-          const error = await response.text();
-          throw new Error(error || 'Erro ao registrar usuário.');
-        }
-
-        setSuccessMessage('Registro concluído! Agora faça login.');
-        setErrorMessage('');
-        setIsLogin(true);
-      } catch (error: any) {
-        setErrorMessage(error.message || 'Erro ao registrar usuário.');
-        setSuccessMessage('');
+      if (storedUsers[formData.email]) {
+        setErrorMessage('Email já cadastrado.');
+        return;
       }
+
+      storedUsers[formData.email] = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      };
+
+      localStorage.setItem('users', JSON.stringify(storedUsers));
+      setSuccessMessage('Registro concluído! Agora faça login.');
+      setErrorMessage('');
+      setIsLogin(true);
     }
   };
 
