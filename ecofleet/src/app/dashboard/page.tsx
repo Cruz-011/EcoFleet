@@ -28,21 +28,32 @@ export default function SustainabilityDashboard() {
   const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
 
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const userId = user?.id;
+  const [user, setUser] = useState<{ id?: number; nome?: string } | null>(null);
 
-  // Redireciona se não estiver logado
+  // Obter usuário ao carregar
   useEffect(() => {
-    if (!userId) {
-      alert('Por favor, faça login.');
-      router.push('/login');
+    if (typeof window !== 'undefined') {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          setUser(parsedUser);
+        } catch (error) {
+          console.error('Erro ao analisar o usuário do localStorage:', error);
+          router.push('/login');
+        }
+      } else {
+        router.push('/login');
+      }
     }
-  }, [userId, router]);
+  }, [router]);
 
   // Função para buscar veículos do usuário
   const fetchVehicles = async () => {
+    if (!user?.id) return;
+
     try {
-      const response = await fetch(`http://localhost:8080/api/veiculos/usuario/${userId}`);
+      const response = await fetch(`http://localhost:8080/api/veiculos/usuario/${user.id}`);
       if (!response.ok) throw new Error('Erro ao buscar veículos.');
       const vehicleData = await response.json();
 
@@ -74,8 +85,8 @@ export default function SustainabilityDashboard() {
   };
 
   useEffect(() => {
-    if (userId) fetchVehicles();
-  }, [userId]);
+    fetchVehicles();
+  }, [user]);
 
   return (
     <>

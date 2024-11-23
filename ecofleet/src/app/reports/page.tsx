@@ -20,16 +20,29 @@ interface Vehicle {
 export default function ReportsPage() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [errorMessage, setErrorMessage] = useState('');
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const userId = user?.id;
+  const [userId, setUserId] = useState<number | null>(null);
 
+  // Verificar `localStorage` no cliente
   useEffect(() => {
-    if (!userId) {
-      alert('Por favor, faça login.');
-      window.location.href = '/login';
+    if (typeof window !== 'undefined') {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          setUserId(parsedUser.id);
+        } catch (error) {
+          console.error('Erro ao analisar o JSON do localStorage:', error);
+          alert('Erro ao carregar as informações do usuário. Faça login novamente.');
+          window.location.href = '/login';
+        }
+      } else {
+        alert('Por favor, faça login.');
+        window.location.href = '/login';
+      }
     }
-  }, [userId]);
+  }, []);
 
+  // Buscar veículos do usuário
   const fetchVehicles = async () => {
     try {
       const response = await fetch(`http://localhost:8080/api/veiculos/usuario/${userId}`);

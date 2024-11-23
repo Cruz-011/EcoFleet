@@ -26,18 +26,28 @@ export default function VehiclesPage() {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [userId, setUserId] = useState<number | null>(null);
   const router = useRouter();
 
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const userId = user?.id;
-
-  // Redireciona se não estiver logado
+  // Obter o ID do usuário do localStorage (apenas no cliente)
   useEffect(() => {
-    if (!userId) {
-      alert('Por favor, faça login.');
-      router.push('/login');
+    if (typeof window !== 'undefined') {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          setUserId(parsedUser.id);
+        } catch (error) {
+          console.error('Erro ao analisar o usuário do localStorage:', error);
+          alert('Por favor, faça login novamente.');
+          router.push('/login');
+        }
+      } else {
+        alert('Por favor, faça login.');
+        router.push('/login');
+      }
     }
-  }, [userId, router]);
+  }, [router]);
 
   // Função para buscar veículos
   const fetchVehicles = async () => {
